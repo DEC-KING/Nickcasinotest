@@ -1,0 +1,111 @@
+<!-- NickcasinoTest - Fun Demo Casino Games -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NickcasinoTest - Fun Casino</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #0c0c0c;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    .section {
+      margin: 40px auto;
+      padding: 20px;
+      border: 1px solid #333;
+      border-radius: 10px;
+      max-width: 500px;
+      background: #1a1a1a;
+    }
+    button {
+      background: #ff4444;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .balance {
+      font-weight: bold;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>NickcasinoTest</h1>
+  <div class="balance">Balance: <span id="balance">1000</span> coins</div>
+
+  <!-- Aviator Game -->
+  <div class="section">
+    <h2>Aviator Game</h2>
+    <p>Plane will take off and crash at a random multiplier. Click 'Cashout' before it crashes!</p>
+    <div>Current Multiplier: <span id="aviator-multiplier">1.00x</span></div>
+    <button onclick="startAviator()">Start</button>
+    <button onclick="cashout()">Cashout</button>
+    <div id="aviator-result"></div>
+  </div>
+
+  <!-- Dice Game -->
+  <div class="section">
+    <h2>Dice Game</h2>
+    <p>Guess Over or Under 50</p>
+    <button onclick="rollDice('over')">Over 50</button>
+    <button onclick="rollDice('under')">Under 50</button>
+    <div id="dice-result"></div>
+  </div>
+
+  <script>
+    let balance = 1000;
+    let aviatorMultiplier = 1.00;
+    let aviatorInterval = null;
+
+    function updateBalance() {
+      document.getElementById('balance').innerText = balance;
+    }
+
+    function startAviator() {
+      aviatorMultiplier = 1.00;
+      document.getElementById('aviator-result').innerText = '';
+      aviatorInterval = setInterval(() => {
+        aviatorMultiplier += 0.05;
+        document.getElementById('aviator-multiplier').innerText = aviatorMultiplier.toFixed(2) + 'x';
+        if (Math.random() < 0.03) { // random crash
+          clearInterval(aviatorInterval);
+          document.getElementById('aviator-result').innerText = 'Plane crashed at ' + aviatorMultiplier.toFixed(2) + 'x!';
+        }
+      }, 200);
+    }
+
+    function cashout() {
+      if (aviatorInterval) {
+        clearInterval(aviatorInterval);
+        const win = Math.floor(100 * aviatorMultiplier);
+        balance += win;
+        updateBalance();
+        document.getElementById('aviator-result').innerText = 'You cashed out and won ' + win + ' coins!';
+      }
+    }
+
+    function rollDice(guess) {
+      const roll = Math.floor(Math.random() * 100);
+      let win = false;
+      if ((guess === 'over' && roll > 50) || (guess === 'under' && roll < 50)) {
+        win = true;
+        balance += 50;
+      } else {
+        balance -= 50;
+      }
+      updateBalance();
+      document.getElementById('dice-result').innerText = `You rolled ${roll}. ${win ? 'You win +50 coins!' : 'You lose -50 coins!'}`;
+    }
+
+    updateBalance();
+  </script>
+</body>
+</html>
